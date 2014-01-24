@@ -341,14 +341,23 @@ var ListModel = Model.extend(function (list) {
 		
 		load: function (list, source) {
 			_list = _normalizeListModelArgument(list);
-			trigger('load', { name: 'load', data: _list, source: source });
+			trigger('load', {
+				name: 'load',
+				data: _list,
+				source: source
+			});
 		},
 		
 		update: function (item, source) {
 			var index = _list.indexOf(item);
 			if (index < 0)
 				return;
-			trigger('update', { name: 'update', data: item, index: index, source: source });
+			trigger('update', {
+				name: 'update', 
+				data: item,
+				index: index,
+				source: source
+			});
 		},
 		
 		add: function (item, index, source) {
@@ -358,7 +367,12 @@ var ListModel = Model.extend(function (list) {
 				index = null;
 			}
 			this._add(item, index);
-			trigger('add', { name: 'add', data: item, index: index, source: source });
+			trigger('add', {
+				name: 'add', 
+				data: item,
+				index: index,
+				source: source
+			});
 		},
 		_add: function (item, index) {
 			_list.add(item, index);
@@ -369,7 +383,12 @@ var ListModel = Model.extend(function (list) {
 			if (index < 0)
 				return;
 			this._remove(item);
-			trigger('remove', { name: 'remove', data: item, index: index, source: source });
+			trigger('remove', {
+				name: 'remove',
+				data: item,
+				index: index,
+				source: source
+			});
 		},
 		_remove: function (item) {
 			_list.remove(item);
@@ -491,7 +510,7 @@ var ListView = View.extend(function (element, model, renderer) {
 			var elem = _renderFunc['create'](item, this),
 				refElem = this.element.children[index];
 			_renderFunc['update'](elem, item, this);
-			listElem.insertBefore(elem, refElem);
+			this.element.insertBefore(elem, refElem);
 			_renderFunc['show'](elem, item, this);
 		},
 		
@@ -509,7 +528,6 @@ var ListView = View.extend(function (element, model, renderer) {
 
 // exports
 return {
-	
 	Class: Class,
 	List: List,
 	Map: Map,
@@ -518,7 +536,6 @@ return {
 	ListModel: ListModel,
 	View: View,
 	ListView: ListView
-	
 };
 
 }));
