@@ -1,0 +1,16 @@
+{
+	"name": "classicjs",
+	"version": "0.1.0",
+	"devDependencies": {
+		"grunt": "~0.4.2",
+		"grunt-contrib-concat": "~0.1.3",
+		"grunt-contrib-uglify": "~0.2.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/simonpai/classicjs.git"
+	},
+	"author": "Simon Pai",
+	"license": "MIT",
+	"readmeFilename": "README.md"
+}
