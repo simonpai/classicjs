@@ -420,15 +420,15 @@ var _simpleClone = function (obj, prop) {
 	prop = prop || {};
 	var includes = Array.isArray(prop.in) && prop.in,
 		excludes = Array.isArray(prop.ex) && new Set(prop.ex),
-		result = {};
+		target = prop.tar || {};
 	
 	(includes || Object.keys(obj)).forEach(function (k) {
 		if (excludes && excludes.contains(k))
 			return;
-		result[k] = obj[k];
+		target[k] = obj[k];
 	});
 	
-	return result;
+	return target;
 }
 
 var ListView = View.extend(function (element, model, renderer) {
