@@ -535,7 +535,12 @@ return {
 	Model: Model,
 	ListModel: ListModel,
 	View: View,
-	ListView: ListView
+	ListView: ListView,
+	
+	u: {
+		void: _voidFunc,
+		simpleClone: _clonePlainObject
+	}
 };
 
 }));
