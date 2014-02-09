@@ -218,7 +218,7 @@ var Set = Class.extend(function (obj) {
 	
 	return {
 		
-		contains: function () {
+		contains: function (value) {
 			return !!_inner[value];
 		},
 		
@@ -413,12 +413,21 @@ var View = Class.extend(function (element, model) {
 
 var _voidFunc = function () {};
 
-var _clonePlainObject = function (obj) {
+var _simpleClone = function (obj, prop) {
 	if (obj == null)
 		return null;
-	var result = {};
-	for (var k in obj)
+	
+	prop = prop || {};
+	var includes = Array.isArray(prop.in) && prop.in,
+		excludes = Array.isArray(prop.ex) && new Set(prop.ex),
+		result = {};
+	
+	(includes || Object.keys(obj)).forEach(function (k) {
+		if (excludes && excludes.contains(k))
+			return;
 		result[k] = obj[k];
+	});
+	
 	return result;
 }
 
@@ -539,7 +548,7 @@ return {
 	
 	u: {
 		void: _voidFunc,
-		simpleClone: _clonePlainObject
+		simpleClone: _simpleClone
 	}
 };
 
