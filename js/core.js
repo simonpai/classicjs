@@ -15,70 +15,44 @@
 	}
 })(this, function () {
 
-// Class //
-var Class = function () {};
 
-Class.prototype.class = Class;
 
-var copyReflectionMember = function (SubClass) {
-	SubClass.extend = Class.extend;
-	SubClass.mixin = Class.mixin;
-	SubClass.isTypeOf = Class.isTypeOf;
-}
-
-Class.extend = function (prop) {
+// extend //
+var extend = function (Class, prop) {
 	
-	var isf = typeof prop === 'function',
-		supCls = this,
-		prototype = isf ? Object.create(this.prototype) : new this();
+	var pisf = typeof prop === 'function';
 	
-	var SubClass = function () {
-		var sub = this, 
-			p = prop;
+	return function () {
 		
-		if (isf) {
-			var hasOldSuper = 'super' in sub,
-				tmp = hasOldSuper ? sub.super : null;
-			sub.super = function () {
-				supCls.apply(sub, arguments);
-			};
-			p = prop.apply(sub, arguments);
-			if (hasOldSuper)
-				sub.super = tmp;
-			else
-				delete sub.super;
-		}
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift(null);
 		
-		for (var name in p || {})
-			this[name] = p[name];
-	}
+		var _super = new (Class.bind.apply(Class, args))(),
+			_this = Object.create(_super),
+			p = (pisf ? prop.apply(_this, arguments) : prop) || {};
+		
+		for (var name in p)
+			_this[name] = p[name];
+		
+		// prepare super object
+		Object.defineProperty(_this, 'super', {
+			get: function () {
+				return _super;
+			}
+		});
+		
+		return _this;
+	};
 	
-	SubClass.prototype = prototype;
-	SubClass.prototype.class = SubClass.prototype.constructor = SubClass;
-	SubClass.super = this;
-	copyReflectionMember(SubClass);
-	
-	return SubClass;
 };
 
-Class.isTypeOf = function (obj) {
-	for (var c = obj.class; c; c = c.super)
-		if (c === this)
-			return true;
-	return false;
-};
-
-Class.mixin = function (cls) {
-	// TODO: take an array of classes
-	return this.extend(cls.prototype);
-};
+// TODO: mixin
 
 
 
 // Collection //
-var List = Class.extend.call(Array, function (obj) {
-	this.super();
-	// skip super, as we let its prototype be Array
+var List = extend(Array, function (obj) {
+	
 	if (Array.isArray(obj))
 		for (var i = 0, len = obj.length; i < len; i++)
 			this.push(obj[i]);
@@ -139,7 +113,7 @@ var List = Class.extend.call(Array, function (obj) {
 	};
 });
 
-var Map = Class.extend(function (obj) {
+var Map = extend(Object, function (obj) {
 	var _inner = obj || {};
 	
 	Object.defineProperty(this, 'isEmpty', {
@@ -195,7 +169,7 @@ var Map = Class.extend(function (obj) {
 	};
 });
 
-var Set = Class.extend(function (obj) {
+var Set = extend(Object, function (obj) {
 	var _inner = {};
 	
 	var _add = function (v) {
@@ -242,7 +216,7 @@ var Set = Class.extend(function (obj) {
 	};
 });
 
-var Model = Class.extend(function () {
+var Model = extend(Object, function () {
 	
 	var _handlers;
 	
@@ -325,9 +299,7 @@ var _normalizeListModelArgument = function (list) {
 	return new List([list]);
 }
 
-var ListModel = Model.extend(function (list) {
-	
-	this.super();
+var ListModel = extend(Model, function (list) {
 	
 	var _list = _normalizeListModelArgument(list);
 	
@@ -398,7 +370,7 @@ var ListModel = Model.extend(function (list) {
 	
 });
 
-var View = Class.extend(function (element, model) {
+var View = extend(Object, function (element, model) {
 	
 	// ($element)
 	if (element && Array.isArray(element) && element.length)
@@ -431,15 +403,21 @@ var _simpleClone = function (obj, prop) {
 	return target;
 }
 
-var ListView = View.extend(function (element, model, renderer) {
+var ListView = extend(function (element, model, renderer) {
 	
-	var _model = model || new ListModel();
+	return new View(element, model || new ListModel());
+	
+}, function (element, model, renderer) {
+	
+	// make model private and control access by getter/setter
+	var _model = this.model;
 	
 	var _applyModel = function (f) {
 		if (!_model)
 			return;
 		_model[f](this._listeners);
 	};
+	_applyModel('on');
 	
 	Object.defineProperty(this, 'model', {
 		get: function () {
@@ -452,8 +430,6 @@ var ListView = View.extend(function (element, model, renderer) {
 		}
 	});
 	
-	// model setter will be called here
-	this.super(element, model);
 	this.renderer = renderer;
 	
 	var _defaultRenderer = {
@@ -537,7 +513,9 @@ var ListView = View.extend(function (element, model, renderer) {
 
 // exports
 return {
-	Class: Class,
+	
+	extend: extend,
+	
 	List: List,
 	Map: Map,
 	Set: Set,
@@ -550,6 +528,7 @@ return {
 		void: _voidFunc,
 		simpleClone: _simpleClone
 	}
+	
 };
 
 }));

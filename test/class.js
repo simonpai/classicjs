@@ -1,22 +1,20 @@
 var assert = require('assert'),
 	cj = require('../out/classic.js');
 
-describe('Class', function() {
+describe('Extend', function() {
 	
 	var A, B, C;
 	
 	before(function() {
 		
-		A = cj.Class.extend({
+		A = cj.extend(Object, {
 			x: 10,
 			y: function () {
 				return this.x;
 			}
 		});
 		
-		B = A.extend(function (z) {
-			
-			this.super();
+		B = cj.extend(A, function (z) {
 			
 			var _z = z;
 			
@@ -27,9 +25,7 @@ describe('Class', function() {
 			};
 		});
 		
-		C = B.extend(function (z, w) {
-			
-			this.super(z);
+		C = cj.extend(B, function (z, w) {
 			
 			var _w = w;
 			
@@ -38,20 +34,6 @@ describe('Class', function() {
 			};
 		});
 		
-	});
-	
-	describe('reflection members', function() {
-		it('Extended class should attain reflection members', function() {
-			assert.equal(cj.Class.extend, A.extend);
-			assert.equal(cj.Class.extend, B.extend);
-			assert.equal(cj.Class.extend, C.extend);
-			assert.equal(cj.Class.mixin, A.mixin);
-			assert.equal(cj.Class.mixin, B.mixin);
-			assert.equal(cj.Class.mixin, C.mixin);
-			assert.equal(cj.Class.isTypeOf, A.isTypeOf);
-			assert.equal(cj.Class.isTypeOf, B.isTypeOf);
-			assert.equal(cj.Class.isTypeOf, C.isTypeOf);
-		});
 	});
 	
 	describe('overridden members', function() {
@@ -68,6 +50,34 @@ describe('Class', function() {
 			assert.equal(c.x + 40, c.y());
 			
 			assert.equal(80, c.w());
+		});
+	});
+	
+	describe('suber object', function() {
+		it('Extended class should have correct super object references', function() {
+			
+			var A = cj.extend(Object, {
+				r: function () {
+					return 10;
+				}
+			});
+			var B = cj.extend(A, {
+				r: function () {
+					return this.super.r() + 10;
+				}
+			});
+			var C = cj.extend(B, {
+				r: function () {
+					return this.super.r() + 10;
+				}
+			});
+			var a = new A(),
+				b = new B(),
+				c = new C();
+			
+			assert.equal(10, a.r());
+			assert.equal(20, b.r());
+			assert.equal(30, c.r());
 		});
 	});
 	
