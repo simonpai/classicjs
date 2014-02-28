@@ -3,41 +3,33 @@ var assert = require('assert'),
 
 describe('Extend', function() {
 	
-	var A, B, C;
-	
-	before(function() {
-		
-		A = cj.extend(Object, {
-			x: 10,
-			y: function () {
-				return this.x;
-			}
-		});
-		
-		B = cj.extend(A, function (z) {
-			
-			var _z = z;
-			
-			return {
-				y: function () {
-					return this.x + _z;
-				}
-			};
-		});
-		
-		C = cj.extend(B, function (z, w) {
-			
-			var _w = w;
-			
-			this.w = function () {
-				return _w;
-			};
-		});
-		
-	});
-	
 	describe('overridden members', function() {
 		it('Extended class should override members as expected.', function() {
+			
+			var A = cj.extend(Object, {
+				x: 10,
+				y: function () {
+					return this.x;
+				}
+			});
+			var B = cj.extend(A, function (z) {
+				
+				var _z = z;
+				
+				return {
+					y: function () {
+						return this.x + _z;
+					}
+				};
+			});
+			var C = cj.extend(B, function (z, w) {
+				
+				var _w = w;
+				
+				this.w = function () {
+					return _w;
+				};
+			});
 			var a = new A(),
 				b = new B(20),
 				c = new C(40, 80);
