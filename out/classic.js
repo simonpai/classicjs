@@ -46,6 +46,8 @@ var extend = function (Class, prop) {
 	
 };
 
+// TODO: mixin
+
 
 
 // Collection //
@@ -383,7 +385,7 @@ var View = extend(Object, function (element, model) {
 
 var _voidFunc = function () {};
 
-var _simpleClone = function (obj, prop) {
+var _copy = function (obj, prop) {
 	if (obj == null)
 		return null;
 	
@@ -524,7 +526,7 @@ return {
 	
 	u: {
 		void: _voidFunc,
-		simpleClone: _simpleClone
+		copy: _copy
 	}
 	
 };
