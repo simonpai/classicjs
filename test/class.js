@@ -75,6 +75,7 @@ describe('Extend', function() {
 	
 	describe('explicit super constructor', function() {
 		it('Explicit super constructor pattern should work as expected.', function() {
+			
 			var Z = cj.extend(Object, {
 				y: function () {
 					return 0;
@@ -100,6 +101,32 @@ describe('Extend', function() {
 			assert.equal(10, b.x);
 			assert.equal(10, b.super.y());
 			assert.equal(0, b.super.super.y());
+			
+		});
+	});
+	
+	describe('finalize', function() {
+		it('finalize() should work as expected.', function() {
+			
+			var A = cj.extend(Object, function () {
+				this.finalize('x', 10);
+				this.finalize('y', 20, false);
+				this.finalize('z', 30, true);
+				this.finalize('w', 40, null); // same as true
+			});
+			var a = new A();
+			
+			assert.strictEqual(undefined, a.finalize);
+			
+			assert.equal(10, a.x);
+			assert.equal(20, a.y);
+			assert.equal(30, a.z);
+			assert.equal(40, a.w);
+			
+			assert.equal(true, a.propertyIsEnumerable('x'));
+			assert.equal(false, a.propertyIsEnumerable('y'));
+			assert.equal(true, a.propertyIsEnumerable('z'));
+			assert.equal(true, a.propertyIsEnumerable('w'));
 			
 		});
 	});

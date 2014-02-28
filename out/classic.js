@@ -18,6 +18,13 @@
 
 
 // extend //
+var _finalize = function (name, value, enumerable) {
+	Object.defineProperty(this, name, {
+		enumerable: enumerable || enumerable == null,
+		value: value
+	});
+};
+
 var extend = function (Class, prop) {
 	
 	var pisf = typeof prop === 'function';
@@ -29,7 +36,11 @@ var extend = function (Class, prop) {
 		
 		var _super = new (Class.bind.apply(Class, args))(),
 			_this = Object.create(_super),
-			p = (pisf ? prop.apply(_this, arguments) : prop) || {};
+			p;
+		
+		_this.finalize = _finalize;
+		p = (pisf ? prop.apply(_this, arguments) : prop) || {};
+		delete _this.finalize;
 		
 		for (var name in p)
 			_this[name] = p[name];
