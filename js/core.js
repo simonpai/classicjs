@@ -23,6 +23,7 @@ var _finalize = function (name, value, enumerable) {
 		enumerable: enumerable || enumerable == null,
 		value: value
 	});
+	return this;
 };
 
 var extend = function (Class, prop) {
@@ -38,7 +39,7 @@ var extend = function (Class, prop) {
 			_this = Object.create(_super),
 			p;
 		
-		_this.finalize = _finalize;
+		_this.finalize = _finalize.bind(_this);
 		p = (pisf ? prop.apply(_this, arguments) : prop) || {};
 		delete _this.finalize;
 		

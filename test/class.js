@@ -109,10 +109,10 @@ describe('Extend', function() {
 		it('finalize() should work as expected.', function() {
 			
 			var A = cj.extend(Object, function () {
-				this.finalize('x', 10);
-				this.finalize('y', 20, false);
-				this.finalize('z', 30, true);
-				this.finalize('w', 40, null); // same as true
+				this.finalize('x', 10)
+					.finalize('y', 20, false)
+					.finalize('z', 30, true)
+					.finalize('w', 40, null); // same as true
 			});
 			var a = new A();
 			
